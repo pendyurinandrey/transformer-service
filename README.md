@@ -9,6 +9,8 @@ Run unit tests only `./mvnw verify`
 
 Run unit tests + integration tests `./mvnw verify -Pintegration-test`
 
+The service exposes Swagger UI by the following path `http://localhost:8080/swagger-ui.html`. It can be useful for manual testing.
+
 # Design notes
 
 * I’ll use Java 21, Spring Boot 3, Spring 6, and Maven.
