@@ -1,3 +1,14 @@
+# How to run in Docker
+* Install Java 21 (the solution was tested on Amazon Corretto)
+* Build `./mvnw package k8s:build`
+* Run `docker run -p 8080:8080 transformer-service:0.0.1-SNAPSHOT`
+
+# How to test
+
+Run unit tests only `./mvnw verify`
+
+Run unit tests + integration tests `./mvnw verify -Pintegration-test`
+
 # Design notes
 
 * I’ll use Java 21, Spring Boot 3, Spring 6, and Maven.
@@ -13,8 +24,3 @@
 * The service will be wrapped in Docker. The Docker image will not be published to any public registry.
 * The solution will be published to a public GitHub repository. I’ll not disclose the task file or the name of the Incode company.
 * The solution will be licensed under GPLv3.
-
-# How to run in Docker
-* Install Java 21 (the solution was tested on Amazon Corretto)
-* Build `./mvnw package k8s:build`
-* Run `docker run transformer-service:0.0.1-SNAPSHOT`
