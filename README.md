@@ -19,7 +19,7 @@ The service exposes Swagger UI by the following path `http://localhost:8080/swag
 * Each element must contain from 1 to 20 transformers.
 * Each transformer can have from 0 to 20 properties.
 * Each property is a pair: \<string key\> -> \<string value\>. Any other JSON types will not be supported for properties.
-* Each transformer class must be annotated with a custom annotation and also implement a custom interface. This may not be ideal from an end-user perspective, but this design will provide compile-time checks, helping users to identify that the transformer’s signature is valid.
+* Each transformer class must be annotated with a custom annotation and implement a custom interface. This may not be ideal from a contributor's perspective, but this design will provide compile-time checks, helping the contributor identify that the transformer’s signature is valid.
 * For Greek letter translation, I’ll use a third-party library where ISO 843 (without accents) has already been implemented.
 * Russian letters are converted according to ICAO DOC 9303.
 * The endpoint response will contain the original string and the final transformed value. No intermediate values will be exposed.
