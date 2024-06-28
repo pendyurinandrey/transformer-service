@@ -18,8 +18,8 @@ public class ElementDTO {
     @NotEmpty
     private String value;
 
-    @Size(min = 1, max = 20)
     @NotNull
+    @Size(min = 1, max = 20)
     @Valid
     private List<TransformerConfigDTO> transformers;
 }

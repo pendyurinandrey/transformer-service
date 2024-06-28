@@ -20,6 +20,9 @@ public class TransformationService {
     }
 
     public List<TransformedElementDTO> transform(List<ElementDTO> elements) {
+        if (elements == null) {
+            return Collections.emptyList();
+        }
         var result = new ArrayList<TransformedElementDTO>(elements.size());
         for (var el : elements) {
             var currentValue = el.getValue();
@@ -43,20 +46,20 @@ public class TransformationService {
             var annotation = tr.getClass().getDeclaredAnnotation(TransformerSpec.class);
             if (annotation == null) {
                 /*
-                    If annotation doesn't set to a class which implements 'Transformer' interface, then
-                    it'll not be possible to use this class in REST API (groupId and transformerId is unknown).
-                    Probably, it's better to signal a contributor that something went wrong during
-                    the applications start, rather than skip this transformer.
+                    If an annotation isn't set to a class that implements the 'Transformer' interface,
+                    it won't be possible to use this class in the REST API (groupId and transformerId will be unknown).
+                    It's probably better to signal to a contributor that something went wrong during
+                    the application's start, rather than skip this transformer.
                  */
-                var msg = String.format("Transformer %s does not annotated with @TransformerSpec",
+                var msg = String.format("Transformer %s is not annotated with @TransformerSpec",
                         tr.getClass().getCanonicalName());
                 throw new InvalidTransformerConfigurationException(msg);
             } else {
                 var id = computeId(annotation.groupId(), annotation.transformerId());
                 if (result.containsKey(id)) {
                     /*
-                        Probably, it's better to fail Spring Context here rather than
-                        trying to somehow resolve duplicated groupId:transformerId.
+                        Probably, it's better to fail the Spring Context here rather than try
+                        to somehow resolve the duplicated groupId:transformerId.
                      */
                     var msg = String.format("More then one transformer has identical groupId:transformerId: %s",
                             id);

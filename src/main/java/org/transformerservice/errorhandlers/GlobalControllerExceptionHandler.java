@@ -1,6 +1,7 @@
 package org.transformerservice.errorhandlers;
 
 import jakarta.servlet.http.HttpServletResponse;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.HttpStatusCode;
@@ -15,6 +16,7 @@ import org.transformerservice.dto.DefaultErrorResponseDTO;
 import org.transformerservice.exceptions.InvalidTransformerConfigurationException;
 import org.transformerservice.exceptions.UnknownTransformerException;
 
+@Slf4j
 @ControllerAdvice
 public class GlobalControllerExceptionHandler extends ResponseEntityExceptionHandler {
 
@@ -22,6 +24,13 @@ public class GlobalControllerExceptionHandler extends ResponseEntityExceptionHan
     @ResponseStatus(HttpStatus.BAD_REQUEST)
     public ResponseEntity<DefaultErrorResponseDTO> handleBadRequest(RuntimeException ex, WebRequest request) {
         return ResponseEntity.badRequest().body(new DefaultErrorResponseDTO(ex.getMessage()));
+    }
+
+    @ExceptionHandler(Exception.class)
+    @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
+    public ResponseEntity<DefaultErrorResponseDTO> handleOtherExceptions(Exception ex, WebRequest request) {
+        log.error(ex.getMessage(), ex);
+        return ResponseEntity.internalServerError().body(new DefaultErrorResponseDTO(ex.getMessage()));
     }
 
 
