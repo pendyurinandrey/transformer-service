@@ -24,5 +24,3 @@ The service exposes Swagger UI by the following path `http://localhost:8080/swag
 * Russian letters are converted according to ICAO DOC 9303.
 * The endpoint response will contain the original string and the final transformed value. No intermediate values will be exposed.
 * The service will be wrapped in Docker. The Docker image will not be published to any public registry.
-* The solution will be published to a public GitHub repository. I’ll not disclose the task file or the name of the Incode company.
-* The solution will be licensed under GPLv3.
