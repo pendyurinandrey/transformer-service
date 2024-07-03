@@ -4,6 +4,7 @@ import org.springframework.stereotype.Service;
 import org.transformerservice.annotations.TransformerSpec;
 import org.transformerservice.dto.ElementDTO;
 import org.transformerservice.dto.TransformedElementDTO;
+import org.transformerservice.dto.TransformerConfigDTO;
 import org.transformerservice.exceptions.InvalidTransformerConfigurationException;
 import org.transformerservice.exceptions.UnknownTransformerException;
 import org.transformerservice.transformers.Transformer;
@@ -23,21 +24,27 @@ public class TransformationService {
         if (elements == null) {
             return Collections.emptyList();
         }
-        var result = new ArrayList<TransformedElementDTO>(elements.size());
-        for (var el : elements) {
-            var currentValue = el.getValue();
-            for (var transformerCfg : el.getTransformers()) {
-                var id = computeId(transformerCfg.getGroupId(), transformerCfg.getTransformerId());
-                if (!idToTransformer.containsKey(id)) {
-                    var msg = String.format("Transform groupId = %s, transformerId = %s is unknown",
-                            transformerCfg.getGroupId(), transformerCfg.getTransformerId());
-                    throw new UnknownTransformerException(msg);
-                }
-                currentValue = idToTransformer.get(id).transform(currentValue, transformerCfg.getProperties());
-            }
-            result.add(new TransformedElementDTO(el.getValue(), currentValue));
+        return elements
+                .stream()
+                .map(el -> {
+                    String transformedValue = el.getTransformers()
+                            .stream()
+                            .reduce(el.getValue(),
+                                    this::applyTransformer,
+                                    (prevValue, nextValue) -> nextValue); // combiner can be any function
+                                                                          // since parallel stream is not used.
+                    return new TransformedElementDTO(el.getValue(), transformedValue);
+                }).toList();
+    }
+
+    private String applyTransformer(String currentValue, TransformerConfigDTO transformerCfg) {
+        var id = computeId(transformerCfg.getGroupId(), transformerCfg.getTransformerId());
+        if (!idToTransformer.containsKey(id)) {
+            var msg = String.format("Transform groupId = %s, transformerId = %s is unknown",
+                    transformerCfg.getGroupId(), transformerCfg.getTransformerId());
+            throw new UnknownTransformerException(msg);
         }
-        return result;
+        return idToTransformer.get(id).transform(currentValue, transformerCfg.getProperties());
     }
 
     private Map<String, Transformer> prepareTransformerMap(List<Transformer> transformers) {
